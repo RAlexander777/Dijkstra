@@ -1,241 +1,160 @@
-<<<<<<< HEAD
+
  <?php
-class Dijkstra {
+class Dijkstra 
+{
 
-    var $visited = array();
-    var $distance = array();
-    var $previousNode = array();
-    var $startnode =null;
+    var $visitados = array();
+    var $distancia = array();
+    var $antnodo = array();
+    var $ininodo =null;
     var $map = array();
-    var $infiniteDistance = 0;
-    var $numberOfNodes = 0;
-    var $bestPath = 0;
-    var $matrixWidth = 0;
+    var $infidistancia = 0;
+    var $Nnodos = 0;
+    var $MejorCamino = 0;
+    var $DimMatriz = 0;
 
-    function Dijkstra(&$ourMap, $infiniteDistance) {
-        $this -> infiniteDistance = $infiniteDistance;
-        $this -> map = &$ourMap;
-        $this -> numberOfNodes = count($ourMap);
-        $this -> bestPath = 0;
+    function Dijkstra(&$ourmap, $infidistancia) 
+    {
+        $this -> infidistancia = $infidistancia;
+        $this -> map = &$ourmap;
+        $this -> Nnodos = count($ourmap);
+        $this -> MejorCamino = 0;
     }
 
-    function findShortestPath($start,$to) {
-        $this -> startnode = $start;
-        for ($i=0;$i<$this -> numberOfNodes;$i++) {
-            if ($i == $this -> startnode) {
-                $this -> visited[$i] = true;
-                $this -> distance[$i] = 0;
-            } else {
-                $this -> visited[$i] = false;
-                $this -> distance[$i] = isset($this -> map[$this -> startnode][$i])
-                    ? $this -> map[$this -> startnode][$i]
-                    : $this -> infiniteDistance;
+    function findShortestPath($start,$to)
+    {
+        $this -> ininodo = $start;
+        for ($i=0;$i<$this -> Nnodos;$i++) 
+        {
+            if ($i == $this -> ininodo) 
+            {
+                $this -> visitados[$i] = true;
+                $this -> distancia[$i] = 0;
+            } 
+            else 
+            {
+                $this -> visitados[$i] = false;
+                $this -> distancia[$i] = isset($this -> map[$this -> ininodo][$i])
+                    ? $this -> map[$this -> ininodo][$i]
+                    : $this -> infidistancia;
             }
-            $this -> previousNode[$i] = $this -> startnode;
-        }
+
+            $this -> antnodo[$i] = $this -> ininodo;
+    }
         
-        $maxTries = $this -> numberOfNodes; //maximo de intentos
+        $maxTries = $this -> Nnodos; //maximo de intentos
         $tries = 0;
-        while (in_array(false,$this -> visited,true) && $tries <= $maxTries) {            
-            $this -> bestPath = $this->findBestPath($this->distance,array_keys($this -> visited,false,true));
-            if($to !== null && $this -> bestPath === $to) {
+
+        while (in_array(false,$this -> visitados,true) && $tries <= $maxTries) 
+        {            
+            $this -> MejorCamino = $this->findMejorCamino($this->distancia,array_keys($this -> visitados,false,true));
+            
+            if($to !== null && $this -> MejorCamino === $to) 
+            {
                 break;
             }
-            $this -> updateDistanceAndPrevious($this -> bestPath);            
-            $this -> visited[$this -> bestPath] = true;
+
+            $this -> updatedistanciaAndPrevious($this -> MejorCamino);            
+            $this -> visitados[$this -> MejorCamino] = true;
+
             $tries++;
         }
     }
 
-    function findBestPath($ourDistance, $ourNodesLeft) {
-        $bestPath = $this -> infiniteDistance;
+    function findMejorCamino($ourdistancia, $ourNodesLeft) 
+    {
+        $MejorCamino = $this -> infidistancia;
         $bestNode = 0;
-        for ($i = 0,$m=count($ourNodesLeft); $i < $m; $i++) {
-            if($ourDistance[$ourNodesLeft[$i]] < $bestPath) {
-                $bestPath = $ourDistance[$ourNodesLeft[$i]];
+
+        for ($i = 0,$m=count($ourNodesLeft); $i < $m; $i++) 
+        {
+            if($ourdistancia[$ourNodesLeft[$i]] < $MejorCamino) 
+            {
+                $MejorCamino = $ourdistancia[$ourNodesLeft[$i]];
                 $bestNode = $ourNodesLeft[$i];
             }
         }
+
         return $bestNode;
     }
 
-    function updateDistanceAndPrevious($obp) {        
-        for ($i=0;$i<$this -> numberOfNodes;$i++) {
-            if(     (isset($this->map[$obp][$i]))
-                &&    (!($this->map[$obp][$i] == $this->infiniteDistance) || ($this->map[$obp][$i] == 0 ))    
-                &&    (($this->distance[$obp] + $this->map[$obp][$i]) < $this -> distance[$i])
-            )     
+    function updatedistanciaAndPrevious($obp) 
+    {        
+        for ($i=0;$i<$this -> Nnodos;$i++) 
+        {
+            if((isset($this->map[$obp][$i]))
+
+                &&    (!($this->map[$obp][$i] == $this->infidistancia) || ($this->map[$obp][$i] == 0 ))    
+                &&    (($this->distancia[$obp] + $this->map[$obp][$i]) < $this -> distancia[$i])
+            )   
+
             {
-                    $this -> distance[$i] = $this -> distance[$obp] + $this -> map[$obp][$i];
-                    $this -> previousNode[$i] = $obp;
+                    $this -> distancia[$i] = $this -> distancia[$obp] + $this -> map[$obp][$i];
+                    $this -> antnodo[$i] = $obp;
             }
         }
     }
 
-    function printMap(&$map) {
-        $placeholder = ' %' . strlen($this -> infiniteDistance) .'d';
+    function printmap(&$map) 
+    {
+        $placeholder = ' %' . strlen($this -> infidistancia) .'d';
         $foo = '';
-        for($i=0,$im=count($map);$i<$im;$i++) {
-            for ($k=0,$m=$im;$k<$m;$k++) {
-                $foo.= sprintf($placeholder, isset($map[$i][$k]) ? $map[$i][$k] : $this -> infiniteDistance);
+
+        for($i=0,$im=count($map);$i<$im;$i++) 
+        {
+            for ($k=0,$m=$im;$k<$m;$k++) 
+            {
+                $foo.= sprintf($placeholder, isset($map[$i][$k]) ? $map[$i][$k] : $this -> infidistancia);
             }
+
             $foo.= "\n";
         }
         return $foo;
     }
 
-    function getResults($to) {
+    function getResults($to) 
+    {
         $ourShortestPath = array();
         $foo = '';
-        for ($i = 0; $i < $this -> numberOfNodes; $i++) {
-            if($to !== null && $to !== $i) {
+
+        for ($i = 0; $i < $this -> Nnodos; $i++) 
+        {
+            if($to !== null && $to !== $i) 
+            {
                 continue;
             }
+
             $ourShortestPath[$i] = array();
             $endNode = null;
             $currNode = $i;
             $ourShortestPath[$i][] = $i;
-            while ($endNode === null || $endNode != $this -> startnode) {
-                $ourShortestPath[$i][] = $this -> previousNode[$currNode];
-                $endNode = $this -> previousNode[$currNode];
-                $currNode = $this -> previousNode[$currNode];
+
+            while ($endNode === null || $endNode != $this -> ininodo) 
+            {
+                $ourShortestPath[$i][] = $this -> antnodo[$currNode];
+                $endNode = $this -> antnodo[$currNode];
+                $currNode = $this -> antnodo[$currNode];
             }
+
             $ourShortestPath[$i] = array_reverse($ourShortestPath[$i]);
-            if ($to === null || $to === $i) {
-            if($this -> distance[$i] >= $this -> infiniteDistance) {
-                $foo .= sprintf("No hay ruta de %d hacia %d. \n",$this -> startnode,$i);
-            } else {
-                $foo .= sprintf(' De %d => hacia  %d = %d (metros) <br> Destinos [%d]: Sigue la siguiente ruta a las clases. (%s).'."\n" ,
-                        $this -> startnode,$i,$this -> distance[$i],
-                        count($ourShortestPath[$i]),
-                        implode('-',$ourShortestPath[$i]));
-            }
+
+            if ($to === null || $to === $i) 
+            {
+                if($this -> distancia[$i] >= $this -> infidistancia) 
+                {
+                    $foo .= sprintf("No hay ruta de %d hacia %d. \n",$this -> ininodo,$i);
+                } 
+                else 
+                {
+                    $foo .= sprintf(' De %d => hacia  %d = %d (metros) <br> Destinos [%d]: Sigue la siguiente ruta a las clases. (%s).'."\n" ,
+                            $this -> ininodo,$i,$this -> distancia[$i],
+                            count($ourShortestPath[$i]),
+                            implode('-',$ourShortestPath[$i]));
+                }
            
             }
         }
+
         return $foo;
     }
-} // end class
-=======
- <?php
-class Dijkstra {
-
-    var $visited = array();
-    var $distance = array();
-    var $previousNode = array();
-    var $startnode =null;
-    var $map = array();
-    var $infiniteDistance = 0;
-    var $numberOfNodes = 0;
-    var $bestPath = 0;
-    var $matrixWidth = 0;
-
-    function Dijkstra(&$ourMap, $infiniteDistance) {
-        $this -> infiniteDistance = $infiniteDistance;
-        $this -> map = &$ourMap;
-        $this -> numberOfNodes = count($ourMap);
-        $this -> bestPath = 0;
-    }
-
-    function findShortestPath($start,$to) {
-        $this -> startnode = $start;
-        for ($i=0;$i<$this -> numberOfNodes;$i++) {
-            if ($i == $this -> startnode) {
-                $this -> visited[$i] = true;
-                $this -> distance[$i] = 0;
-            } else {
-                $this -> visited[$i] = false;
-                $this -> distance[$i] = isset($this -> map[$this -> startnode][$i])
-                    ? $this -> map[$this -> startnode][$i]
-                    : $this -> infiniteDistance;
-            }
-            $this -> previousNode[$i] = $this -> startnode;
-        }
-        
-        $maxTries = $this -> numberOfNodes;
-        $tries = 0;
-        while (in_array(false,$this -> visited,true) && $tries <= $maxTries) {            
-            $this -> bestPath = $this->findBestPath($this->distance,array_keys($this -> visited,false,true));
-            if($to !== null && $this -> bestPath === $to) {
-                break;
-            }
-            $this -> updateDistanceAndPrevious($this -> bestPath);            
-            $this -> visited[$this -> bestPath] = true;
-            $tries++;
-        }
-    }
-
-    function findBestPath($ourDistance, $ourNodesLeft) {
-        $bestPath = $this -> infiniteDistance;
-        $bestNode = 0;
-        for ($i = 0,$m=count($ourNodesLeft); $i < $m; $i++) {
-            if($ourDistance[$ourNodesLeft[$i]] < $bestPath) {
-                $bestPath = $ourDistance[$ourNodesLeft[$i]];
-                $bestNode = $ourNodesLeft[$i];
-            }
-        }
-        return $bestNode;
-    }
-
-    function updateDistanceAndPrevious($obp) {        
-        for ($i=0;$i<$this -> numberOfNodes;$i++) {
-            if(     (isset($this->map[$obp][$i]))
-                &&    (!($this->map[$obp][$i] == $this->infiniteDistance) || ($this->map[$obp][$i] == 0 ))    
-                &&    (($this->distance[$obp] + $this->map[$obp][$i]) < $this -> distance[$i])
-            )     
-            {
-                    $this -> distance[$i] = $this -> distance[$obp] + $this -> map[$obp][$i];
-                    $this -> previousNode[$i] = $obp;
-            }
-        }
-    }
-
-    function printMap(&$map) {
-        $placeholder = ' %' . strlen($this -> infiniteDistance) .'d';
-        $foo = '';
-        for($i=0,$im=count($map);$i<$im;$i++) {
-            for ($k=0,$m=$im;$k<$m;$k++) {
-                $foo.= sprintf($placeholder, isset($map[$i][$k]) ? $map[$i][$k] : $this -> infiniteDistance);
-            }
-            $foo.= "\n";
-        }
-        return $foo;
-    }
-
-    function getResults($to) {
-        $ourShortestPath = array();
-        $foo = '';
-        for ($i = 0; $i < $this -> numberOfNodes; $i++) {
-            if($to !== null && $to !== $i) {
-                continue;
-            }
-            $ourShortestPath[$i] = array();
-            $endNode = null;
-            $currNode = $i;
-            $ourShortestPath[$i][] = $i;
-            while ($endNode === null || $endNode != $this -> startnode) {
-                $ourShortestPath[$i][] = $this -> previousNode[$currNode];
-                $endNode = $this -> previousNode[$currNode];
-                $currNode = $this -> previousNode[$currNode];
-            }
-            $ourShortestPath[$i] = array_reverse($ourShortestPath[$i]);
-            if ($to === null || $to === $i) {
-            if($this -> distance[$i] >= $this -> infiniteDistance) {
-                $foo .= sprintf("no route from %d to %d. \n",$this -> startnode,$i);
-            } else {
-                $foo .= sprintf(' From %d => to  %d = %d (meters) <br> destinations [%d]: Follow the route to the classes (%s).'."\n" ,
-                        $this -> startnode,$i,$this -> distance[$i],
-                        count($ourShortestPath[$i]),
-                        implode('-',$ourShortestPath[$i]));
-            }
-            $foo .= str_repeat('-',20) . "\n";
-                if ($to === $i) {
-                    break;
-                }
-            }
-        }
-        return $foo;
-    }
-} // end class
->>>>>>> f07f67a99b1ce3bfbd69f6dee1a4a0d42e789a18
-?> 
+}
