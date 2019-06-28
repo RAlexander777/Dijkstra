@@ -21,7 +21,7 @@
 	</h1>
 </center>
 </header> 
-<center><img src="Grafo.jpg"  usemap="#routes" border="0">
+<center><img src="Grafo1.jpg" border="0">
 </center>
 
 <center>
